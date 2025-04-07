@@ -8,7 +8,7 @@
 #define RESIZEAMOUNT 5
 #define MAX_SIZE INT32_MAX/4
 
-template <typename T> class Array : public DataManager<T> //Класс - один из способов хранения данных
+template <typename T> class Array //: public DataManager<T> //Класс - один из способов хранения данных
 {
 public:
 	Array();
@@ -21,12 +21,13 @@ public:
 	bool isFull();
 	bool isEmpty();
 	T get(int) const;
-	T operator[](int at) const;
+	T operator[](int at) const;	// используется при получении содержимого из ячейки массива
 	int getSize() const;
 	void resize(int);
 	void show();
 	void deleteAt(int);
-	bool find(T&& x, int &index);
+	//bool find(T&& x, int &index);
+	int getCount() const;
 
 private:
 	unsigned int _size;
@@ -111,7 +112,7 @@ T Array<T>::get(int i) const
 	return _data[i];
 }
 
-template <typename T>
+template <typename T>		//оператор для вывода данных
 T Array<T>::operator[](int i) const
 {
 	if (i > _count - 1) throw std::exception("Get failure: выход за пределы");
@@ -138,6 +139,12 @@ template <typename T>
 int Array<T>::getSize() const
 {
 	return _size;
+}
+
+template <typename T>
+int Array<T>::getCount() const
+{
+	return _count;
 }
 
 template <typename T>
@@ -191,7 +198,7 @@ void Array<T>::deleteAt(int i)
 	moveElementsLeft(i+1);
 	_count--;
 }
-
+/*
 template <typename T>
 bool Array<T>::find(T&& x, int& index)
 {
@@ -203,4 +210,6 @@ bool Array<T>::find(T&& x, int& index)
 			}
 	return false;
 }
+*/
+
 
