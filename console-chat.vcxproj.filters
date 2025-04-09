@@ -33,6 +33,9 @@
     <ClInclude Include="ConversationManager.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Message.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="User.cpp">
@@ -54,6 +57,9 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="getRightInt.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Message.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

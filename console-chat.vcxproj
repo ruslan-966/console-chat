@@ -130,6 +130,7 @@
     <ClInclude Include="Array.h" />
     <ClInclude Include="CommonMessage.h" />
     <ClInclude Include="ConversationManager.h" />
+    <ClInclude Include="Message.h" />
     <ClInclude Include="PrivateMessage.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
@@ -139,6 +140,7 @@
     <ClCompile Include="ConversationManager.cpp" />
     <ClCompile Include="getRightInt.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Message.cpp" />
     <ClCompile Include="PrivateMessage.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="UserManager.cpp" />
