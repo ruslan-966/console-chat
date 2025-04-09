@@ -29,6 +29,7 @@ char ConversationManager::regOrComm()
 
 bool ConversationManager::userRegistration(Array<User>& allUsers)
 {
+    this->cleanConsole();
     std::cout << "\n\nРегистрация нового пользователя:\n\n";
     bool isSpellingBad = true;
     std::string log{""};
@@ -233,7 +234,7 @@ void ConversationManager::userMessChoise(User& user, Array<User>& allUsers, Arra
     std::cout << "Выберите:\n1 - написать сообщение в общий чат.\n2 - написать сообщение в чат пользователя.\n";
     std::cout << "3 - просмотреть сообщения из общего чата (количество сообщений: " << arrCM.getCount() << ").\n";
 
-    //проверяем наличие частных сообщений
+    //проверяем наличие личных сообщений
     std::string name = user.getNickname();
     int countPM{0};
     Array <int> numbersFromPM;
@@ -306,18 +307,52 @@ void ConversationManager::userMessChoise(User& user, Array<User>& allUsers, Arra
             std::cout << strList[i].num << ". " << strList[i].name << std::endl;
         }
         bool isNumNotOK = true;
-        int choise = getIntValue();
+        int choise{ 0 };
+        while (isNumNotOK)
+        {
+            choise = getIntValue();
+            if (choise >= 0 && choise < strList.getCount())   //выбрано правильное число
+                isNumNotOK = false;
+        }
         
-        //просто код
-        std::string mes{ "" };
-        getline(std::cin, mes);
-        int mesNum = arrCM.getCount();
-        CommonMessage* ptrCommonMes = new CommonMessage(mesNum, mes, name);
+        std::cout << "\nНаберите текст сообщение для " << strList[choise].name << ": ";
+        std::string privateMes{ "" };
+        getline(std::cin, privateMes);
+        int mesNum = arrPM.getCount();
+
+        PrivateMessage* ptrPrivateMes = new PrivateMessage(mesNum, std::move(privateMes), std::move(user.getNickname()), std::move(strList[choise].name));
         std::cout << "\n\nСообщение сохранено под номером: " << mesNum << " \n\n";
-        arrCM.add(std::move(*ptrCommonMes));
-        delete ptrCommonMes;
-        // продолжение следует
+        arrPM.add(std::move(*ptrPrivateMes));
+        delete ptrPrivateMes;
     }
-       
+    if (sim == '3')         //просмотр сообщений из общего чата 
+    {
+        this->cleanConsole();
+        std::cout << "\nОбщий чат. Все сообщения:\n\n";
+        for (int i = 0; i < arrCM.getCount(); ++i)
+        {
+            std::cout << arrCM[i].getSendFrom() << " написал: " << arrCM[i].getMessage() << std::endl;
+        }
+        std::cout << "\n\nВведите любой символ, что бы выйти из режима прочтения общего чата: ";
+        char sim;
+        sim = _getch();
+    }
+
+    if (sim == '4')     //просмотр частнх сообщений
+    {
+        this->cleanConsole();
+        std::cout << "\nЧат. Все личные сообщения:\n\n";
+        for (int i = 0; i < arrPM.getCount(); ++i)
+        {
+            if (*arrPM[i].getSendTo() == user.getNickname())
+                std::cout << arrPM[i].getSendFrom() << " написал: " << arrPM[i].getMessage() << std::endl;
+        }
+        std::cout << "\n\nВведите любой символ, что бы выйти из режима прочтения чата личных сообщений: ";
+        char sim;
+        sim = _getch();
+    }
+
+    if (sim == '5')         //завершить работу с сообщениями
+    {}
 }
 

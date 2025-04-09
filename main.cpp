@@ -29,15 +29,27 @@ int main()
 		{
 		case '1':
 			if (isItNextLoop)
+			{
 				cm->cleanConsole();
-			cm->userRegistration(allUsers);
+			}
 			isItNextLoop = true;
+			cm->userRegistration(allUsers);
 			break;
 		case '2':
-			uNum = cm->usersInput(allUsers);
+			if (isItNextLoop)
+			{
+				cm->cleanConsole();
+				isItNextLoop = true;
+			}
+			else
+			{
+				std::cout << "\n\nЌет зарегистрированных пользователей, начните с п.1.\n\n";
+				break;
+			}
+			uNum = cm->usersInput(allUsers);		//номер зарегистрировавшегос€ пользовател€ из массива Users
 			if (uNum > -1)
 			{
-				User user = allUsers[uNum];
+				User user = allUsers[uNum];			//получаем запись этого пользовател€
 				cm->userMessChoise(user, allUsers, privateMessagePool, commonMessagePool);
 			}
 			break;
@@ -47,50 +59,5 @@ int main()
 			break;
 		}
 	}
-
-
-	
-	// 1. «десь приветствуем предалгаем ввести пользовател€
-
-	// 2. ѕосле ввода пользовател€, закончить регистрацию 
-	// 
-	// ќчищаем консоль и выводим общие сообщени€ и частные сообщени€, если есть.
-	// хочет ли он написать сообщени€ всем, если нет - предлагаем зарегистрировать еще одного пользовател€
-
-	// ≈сли да - пункт 1 если нет - пункт 3
-	//3. ¬вод сообщени€ с пометкой - всем, заносим их в массив "общие сообщени€"
-	//3.1 —прашиваем, хотите ли написать еще сообщение. ≈сли нет - выход на страничку регистраци€ пользовател€ или нового пользовател€
-
-	//4. —татус - новый пользователь
-
-	//5. «авершить работу программы
-
-	//6. ≈сли общее стообщение - уже видел это сообщение 
-
-	//7.
-	/*
-	User* ptrUserFrom = new User("logKol", " ол€","100");
-	User* ptrUserTo = new User("logSas", "—аша", "101");
-
-	
-	PrivateMessage* ptrMes = new PrivateMessage;
-	
-	ptrMes->readMessage(ptrUserFrom, ptrUserTo);
-	//заносим номер сообщени€ в —ообщение
-	int lstCount = messagePool.getCount();
-	ptrMes->setNumMessage(lstCount);
-	//«аносим в массив сообщение
-	messagePool.add(move( *ptrMes));
-	delete ptrMes;
-
-	// выводим сообщение из массива и выводим на консоль
-	PrivateMessage mes = messagePool[0];
-	mes.printMessage();
-
-	cout << "ѕривет ћир!" << endl;
-	
-	delete ptrUserFrom;
-	delete ptrUserTo;
-	*/
 	return 0;
 }
