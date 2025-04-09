@@ -38,7 +38,7 @@ int PrivateMessage::getNumMessage() const
 	return _numMessage;
 }
 
-string* PrivateMessage::getMessage()
+string* PrivateMessage::getMessage() 
 {
 	return &_message;
 }
