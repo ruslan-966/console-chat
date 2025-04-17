@@ -1,12 +1,13 @@
 #include "ConversationManager.h"
+#include "DataManager.h"
 
 ConversationManager::ConversationManager()
 {
 }
 
-ConversationManager::ConversationManager(Array<User>& _allUsers, Array<Message>& privateMessagePool, Array<Message>& commonMessagePool)
+ConversationManager::ConversationManager(Array<Message>& privateMessagePool, Array<Message>& commonMessagePool)
 {
-    //allUsers = Array<User>( _allUsers);
+    allUsers = UserManager(std::move(std::make_unique<Array<User>>(10)));
 }
 
 void ConversationManager::cleanConsole()         // Очищаем консоль
@@ -16,12 +17,11 @@ void ConversationManager::cleanConsole()         // Очищаем консоль
 
 void ConversationManager::start()
 {
-    bool isRun = true;
     this->greeting();
     bool isItNextLoop = false;
     int uNum{ -1 };
     //Начальное меню
-    while (isRun)
+    while (true)
     {
         char choice = this->regOrComm();
         switch (choice)
@@ -32,7 +32,7 @@ void ConversationManager::start()
                 this->cleanConsole();
             }
             isItNextLoop = true;
-            this->userRegistration(allUsers);
+            this->userRegistration();
             break;
         case '2':
             if (isItNextLoop)
@@ -45,17 +45,16 @@ void ConversationManager::start()
                 std::cout << "\n\nНет зарегистрированных пользователей, начните с п.1.\n\n";
                 break;
             }
-            uNum = this->usersInput(allUsers);		//номер зарегистрировавшегося пользователя из массива Users
+            uNum = this->usersInput();		//номер зарегистрировавшегося пользователя из массива Users
             if (uNum > -1)
             {
-                User user = allUsers[uNum];			//получаем запись этого пользователя
-                this->userMessChoise(user, allUsers, privateMessagePool, commonMessagePool);
+                User user = allUsers.getUser(uNum);			//получаем запись этого пользователя
+                this->userMessChoise(user);
             }
             break;
         case '3':
             std::cout << "\n\nРабота программы завершена.\n";
-            isRun = false;
-            break;
+            return;
         }
     }
 }
@@ -82,7 +81,7 @@ char ConversationManager::regOrComm()
     }
 }
 
-bool ConversationManager::userRegistration(Array<User>& allUsers)
+bool ConversationManager::userRegistration()
 {
     this->cleanConsole();
     std::cout << "\n\nРегистрация нового пользователя:\n\n";
@@ -124,7 +123,7 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
             bool isLogUnique = true;
             for (int i = 0; i < allUsers.getCount(); ++i)
             {
-                if (allUsers[i].getLogin() == log) 
+                if (allUsers.findUserByLogin(std::move(log))) 
                 {
                     isLogUnique = false;
                     break;
@@ -145,6 +144,7 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
     {
         std::cout << "Имя (русские буквы, цифры и знак нижнего подчёркивания): ";
         getline(std::cin, name);
+        //std::cout << name[0] << (int)name[0] << std::endl;        // тестирование букв и цифр
         if (name.length() == 0)
         {
             std::cout << "\n\nПустая строка не может быть имененм пользователя. Вышли из режима регистрации пользователя.\n\n";
@@ -163,6 +163,7 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
                 (c <= -6 && c >= -36)  ||                     // символ русская буква Ь-ъ
                 (c <= -1 && c >= -4)   ||                     // символ русская буква ь-я
                 c == -88 || c == -72   ||                     // символы Ё, ё
+                c == -5 || c == -37    ||                     // символы ы, Ы
                 (c == 95)))                                   // символ нижнее подчеркивание
             {
                 /*      ***Отладка***
@@ -181,7 +182,7 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
             bool isLogUnique = true;
             for (int i = 0; i < allUsers.getCount(); ++i)
             {
-                if (allUsers[i].getNickname() == name)
+                if (allUsers.findUserByNickname(std::move(name)))
                 {
                     isLogUnique = false;
                     break;
@@ -197,8 +198,7 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
     }
     //std::cout << "Введено имя: " << name << std::endl;                                            //***Отладка****
 
-    isSpellingBad = true;
-    while (isSpellingBad)
+    while (true)
     {
         pass = "";
         std::cout << "Пароль (латинские буквы, цифры и \nспециальные знаки, кроме пробела и восклицательного знака): ";
@@ -229,18 +229,19 @@ bool ConversationManager::userRegistration(Array<User>& allUsers)
              
         }
         if (!isSimbolBad)
-            isSpellingBad = false;
+            //isSpellingBad = false;
+            break;
     }
     //std::cout << "Введен пароль: " << pass << std::endl;                                          //***Отладка****
     //Заносим в массив нового пользователя
-    User* ptrUser = new User(log, name, pass);
-    allUsers.add(std::move(*ptrUser));
-    delete ptrUser;
-    std::cout << "\n\nНовый пользователь '" << name << "' успешно зарегистрирован.\n\n";
+    std::cout << "\n\n";
+    allUsers.addUser(std::move(User(log, name, pass)));
+    std::cout << "\n";
+    //std::cout << "\n\nНовый пользователь '" << name << "' успешно зарегистрирован.\n\n";
     return true;
 }
 
-int ConversationManager::usersInput(Array<User>& allUsers)
+int ConversationManager::usersInput()
 {
     std::string log{""};
     std::string pass{""};
@@ -257,13 +258,11 @@ int ConversationManager::usersInput(Array<User>& allUsers)
     }
     //перебираем массив пользователей на совпадение логина
     int userNum{-1};
-    for (int i = 0; i < allUsers.getCount(); ++i)
+       
+    if (!allUsers.findUserByLogin(std::move(log), userNum))      //Введенный логин не найден
     {
-        if (allUsers[i].getLogin() == log)
-        {
-            userNum = i;
-            break;
-        }
+        std::cout << "\n\nОшибка при вводе логина пользователя!\n\n";
+        return -1;
     }
     
     std::cout << "\n\nВведите пароль: ";
@@ -275,16 +274,16 @@ int ConversationManager::usersInput(Array<User>& allUsers)
         _putch('*');
     }
     // сравниваем пароль с данными пользователя из массива
-    if (pass != allUsers[userNum].getPassword())        //логин и пароль не совпали
+    if (pass != allUsers.getUser(userNum).getPassword())        //пароль не совпал
     {
-        std::cout << "\n\nОшибка при вводе логина или пароля.\n\n";
+        std::cout << "\n\nОшибка при вводе пароля пользователя.\n\n";
         userNum = -1;
     }
         
     return userNum;
 }
 
-void ConversationManager::userMessChoise(User& user, Array<User>& allUsers, Array<Message>& arrPM, Array<Message>& arrCM)
+void ConversationManager::userMessChoise(User& user)
 {
     bool isRun = true;
     //Имя пользователя
@@ -292,46 +291,60 @@ void ConversationManager::userMessChoise(User& user, Array<User>& allUsers, Arra
     while (isRun)
     {
 
-        int countPM{ amountPrivateMessage(arrPM, name) };
+        //int countPM{ amountPrivateMessage(name) };
+
 
         this->cleanConsole();
         std::cout << "\n\n" << user.getNickname() << ", возможные действия:\n";
-        std::cout << "Выберите:\n1 - написать сообщение в общий чат.\n2 - написать сообщение в чат пользователя.\n";
-        std::cout << "3 - просмотреть сообщения из общего чата (количество сообщений: " << arrCM.getCount() << ").\n";
-        std::cout << "4 - просмотреть частные сообщения (количество сообщений: " << countPM << ").\n";
+        std::cout << "Выберите:\n1 - Перейти в общий чат.\n2 - Перейти к личным чатам.\n";
+        
+        std::cout << "4 - просмотреть частные сообщения (количество сообщений: " << "countPM" << ").\n";
         std::cout << "5 - завершить работу с сообщениями.\n";
         std::cout << "\nРезультат выбора : ";
 
         // отслеживаем выбор пользователя
         char sim;
-        bool isSimOK = false;
-        while (!isSimOK)
+        while (true)
         {
             sim = _getch();
 
-            if (sim == '1' || sim == '2' || sim == '3' || sim == '4' || sim == '5')
+            if (sim == '1' || sim == '2' || sim == '4' || sim == '5')
             {
                 std::cout << sim << std::endl << std::endl;
-                isSimOK = true;
+                break;
             }
         }
 
-        if (sim == '1')  //написать сообщение в общий чат
+        if (sim == '1')  //перейти в общий чат
         {
-            inputCommonMessage(arrCM, name);
-        }
-        if (sim == '2')     //написать сообщение в чат пользоватля
-        {
-            inputPrivateMessage(allUsers, user, arrPM);
-        }
-        if (sim == '3')         //просмотр сообщений из общего чата 
-        {
-            outputCommonMessage(arrCM);
-        }
+            outputCommonMessage(); //вывод сообщений из общего чата
 
+            std::cout << "\n\nХотите написать сообщение в общий чат?\nЦифра 1- Да, цифра 2 - Выйти из общего чата.: ";
+            char sim;
+            while (true)
+            {
+                sim = _getch();
+
+                if (sim == '1' || sim == '2')
+                {
+                    std::cout << sim << std::endl << std::endl;
+                    break;
+                }
+            }
+            if (sim == '1')
+            {
+
+                inputCommonMessage(name);
+            }
+        }
+        if (sim == '2')     //перейти к личным сообщениям
+        {
+            privateMesMenu(name);
+        }
+        
         if (sim == '4')     //просмотр частнх сообщений
         {
-            outputPrivateMesage(arrPM, user);
+            outputPrivateMesage(user);
         }
 
         if (sim == '5')         //завершить работу с сообщениями
@@ -339,15 +352,15 @@ void ConversationManager::userMessChoise(User& user, Array<User>& allUsers, Arra
     }
 }
 
-void ConversationManager::outputPrivateMesage(Array<Message>& arrPM, User& user)
+void ConversationManager::outputPrivateMesage(User& user)
 {
     {
         this->cleanConsole();
         std::cout << "\nЧат. Все личные сообщения:\n\n";
-        for (int i = 0; i < arrPM.getCount(); ++i)
+        for (int i = 0; i < privateMessagePool.getCount(); ++i)
         {
-            if (*arrPM[i].getSendTo() == user.getNickname())
-                std::cout << *arrPM[i].getSendFrom() << " написал: " << *arrPM[i].getMessage() << std::endl;
+            if (*privateMessagePool[i].getSendTo() == user.getNickname())
+                std::cout << *privateMessagePool[i].getSendFrom() << " написал: " << *privateMessagePool[i].getMessage() << std::endl;
         }
         std::cout << "\n\nНажмите на любую клавишу, что бы выйти из режима прочтения чата личных сообщений: ";
         char sim;
@@ -355,93 +368,218 @@ void ConversationManager::outputPrivateMesage(Array<Message>& arrPM, User& user)
     }
 }
 
-void ConversationManager::outputCommonMessage(Array<Message>& arrCM)
+void ConversationManager::outputCommonMessage()
 {
     this->cleanConsole();
     std::cout << "\nОбщий чат. Все сообщения:\n\n";
-    for (int i = 0; i < arrCM.getCount(); ++i)
+    for (int i = 0; i < commonMessagePool.getCount(); ++i)
     {
-        std::cout << "'" << *arrCM[i].getSendFrom() << "'" << " написал: " << *arrCM[i].getMessage() << std::endl;
+        std::cout << "'" << *commonMessagePool[i].getSendFrom() << "'" << " написал: " << *commonMessagePool[i].getMessage() << std::endl;
     }
-    std::cout << "\n\nНажмите на любую клавишу, что бы выйти из режима прочтения общего чата: ";
-    char sim;
-    sim = _getch();
 }
 
-void ConversationManager::inputPrivateMessage(Array<User>& allUsers, User& user, Array<Message>& arrPM)
+void ConversationManager::inputPrivateMessage(User& user)
 {
     this->cleanConsole();
     std::cout << "\n\nВыберите номер пользователя, что бы написать сообщение: \n";
-
-    struct usersList    //временная структура для создания списка пользователей
-    {
-        int num{ 0 };
-        std::string name{ "" };
-        int numInAllUsers{ 0 };
-    };
-    Array <usersList> strList;
-    int count{ 0 };
+    int count = 0;
     for (int i = 0; i < allUsers.getCount(); ++i)
     {
-        if (user.getNickname() != allUsers[i].getNickname())
+        if (!(allUsers.getUser(i) == user))
         {
-            usersList* ptrUL = new usersList;
-            ptrUL->name = allUsers[i].getNickname();
-            ptrUL->num = count;
-            ptrUL->numInAllUsers = i;
-            strList.add(std::move(*ptrUL));
-            delete ptrUL;
-            count += 1;
+            std::cout << count << ". " << allUsers.getUser(i).getNickname() << std::endl;
+            count++;
         }
     }
-    for (int i = 0; i < strList.getCount(); ++i)
-    {
-        std::cout << strList[i].num << ". " << strList[i].name << std::endl;
-    }
-    bool isNumNotOK = true;
     int choise{ 0 };
-    while (isNumNotOK)
+    while (true)
     {
         choise = getIntValue();
-        if (choise >= 0 && choise < strList.getCount())   //выбрано правильное число
-            isNumNotOK = false;
+        if (choise >= 0 && choise < count)   //выбрано правильное число
+            break;
+        else
+        {
+            std::cout << "\n\nНе удалось понять, какому пользователю Вы хотите написать сообщение. Попробуйте снова:";
+        }
     }
 
-    std::cout << "\nНаберите текст сообщение для " << strList[choise].name << ": ";
+    int index;
+    allUsers.findUser(std::move(user), index);
+    if (choise >= index) choise++;
+    std::cout << "\nНаберите текст сообщение для " << allUsers.getUser(choise).getNickname() << ": ";
     std::string privateMes{ "" };
     getline(std::cin, privateMes);
-    int mesNum = arrPM.getCount();
+    int mesNum = privateMessagePool.getCount();
 
-    std::string name1 = user.getNickname();
-    Message* ptrPrivateMes = new Message(mesNum, privateMes, name1, strList[choise].name);
+    Message* ptrPrivateMes = new Message(mesNum, privateMes, user.getNickname(), allUsers.getUser(choise).getNickname());
     std::cout << "\n\nСообщение сохранено под номером: " << mesNum << " \n\n";
-    arrPM.add(std::move(*ptrPrivateMes));
+    privateMessagePool.add(std::move(*ptrPrivateMes));
     delete ptrPrivateMes;
 }
 
-void ConversationManager::inputCommonMessage(Array<Message>& arrCM, std::string& name)
+void ConversationManager::inputCommonMessage(std::string& name)
 {
     this->cleanConsole();
     std::cout << "\n\nНаберите сообщение для всех: ";
     std::string mes{ "" };
     getline(std::cin, mes);
-    int mesNum = arrCM.getCount();
+    int mesNum = commonMessagePool.getCount();
     Message* ptrCommonMes = new Message(mesNum, mes, name);
     std::cout << "\n\nСообщение сохранено под номером: " << mesNum << " \n\n";
-    arrCM.add(std::move(*ptrCommonMes));
+    commonMessagePool.add(std::move(*ptrCommonMes));
     delete ptrCommonMes;
 }
 
-int ConversationManager::amountPrivateMessage(Array<Message>& arrPM, std::string& name)
+int ConversationManager::amountPrivateMessage(std::string& name)
 {
     int countPM{ 0 };
-    for (int i = 0; i < arrPM.getCount(); ++i)
+    for (int i = 0; i < privateMessagePool.getCount(); ++i)
     {
-        if (*arrPM[i].getSendTo() == name)
+        if (*privateMessagePool[i].getSendTo() == name)
         {
             countPM += 1;
         }
     }
     return countPM;
+}
+void ConversationManager::privateMesMenu(std::string& name)
+{
+    int mainID = allUsers.getPosNumber(name);
+    //Всех юзеров делим на два массива: с кем есть чаты и скем нет
+    Array<int> haveChat;
+    Array <int> noChart;
+    for (int i = 0; i < ptrPrivCharts.getCount(); ++i)
+    {
+        PrivateChat a = *ptrPrivCharts[i];
+        if (a.isItRightChat(mainID))
+        {
+            haveChat.add(a.getAnotherUser(mainID));
+        }
+    }
+    for (int i = 0; i < allUsers.getCount(); ++i)
+    {
+        bool hasUserInChat = false;
+        for (int j = 0; j < haveChat.getCount(); ++j)
+        {
+            if (haveChat[j] == i)
+            {
+                hasUserInChat = true;
+                break;
+            }
+        }
+        if (!hasUserInChat &&(i != mainID))
+            noChart.add(std::move(i));
+    }
+
+    this->cleanConsole();
+    if (haveChat.getCount() == 0)
+    {
+        std::cout << "\nПока у Вас не создано ни одного чата с пользователями:";
+    }
+    else
+    {
+        for (int i = 0; i < haveChat.getCount(); ++i)
+        {
+            int ii = haveChat[i];
+            std::cout << std::endl << i << ". - " << allUsers.getUser(ii).getNickname();
+        }
+    }
+    if(haveChat.getCount() > 0)
+        std::cout << "\n\nВыберите номер перед именем пользователя, которому Вы хотите написать.";
+    std::cout << " \nЧто бы создать новый чат, введите число " << haveChat.getCount() << ".";
+    std::cout << "Что бы выйти из меню - наберите число " << haveChat.getCount() + 1;
+
+    std::cout << "\n\nВаш выбор: ";
+    int choise{ 0 };
+    while (true)
+    {
+        choise = getIntValue();
+        /*
+        std::cout << "Вы ввели: " << choise << std::endl;
+        char st;
+        st = _getch();
+        */
+        if (choise >= 0 && choise <= haveChat.getCount() + 1)   //выбрано правильное число
+            break;
+        else
+        {
+            std::cout << "\n\nНе удалось понять, что Вы хотели выбрать из списка. Попробуйте снова:";
+        }
+    }
+    if (choise >= 0 && choise < haveChat.getCount())        //Написать в в чат пользователю
+    {
+        readWritePrivateChat(choise);
+    }
+    else if (choise == haveChat.getCount())                 //создать новый чат
+    {
+        createNewChart(mainID, noChart);
+    }
+    else if (choise == haveChat.getCount()+1)               //выйти на уровень вверх
+    {
+        return;
+    }
+}
+
+void ConversationManager::readWritePrivateChat(int)
+{
+}
+
+void ConversationManager::createNewChart(int mainID, Array<int> noChart)
+{
+    if (noChart.getCount() > 0)
+    {
+        this->cleanConsole();
+        std::cout << "\n\nПеречень имен пользователей, с которыми можно создать новый чат:";
+        for (int i = 0; i < noChart.getCount(); ++i)
+        {
+            int a = noChart[i];
+            std::cout << std::endl << i << ". " << allUsers.getUser(a).getNickname();
+        }
+        std::cout << "\nВыберите номер пользователя или введите " << noChart.getCount() << " что бы выйти из меню.";
+        int choise{ 0 };
+        while (true)
+        {
+            choise = getIntValue();
+            /*
+            std::cout << "Вы ввели: " << choise << std::endl;
+            char st;
+            st = _getch();
+            */
+            if (choise >= 0 && choise <= noChart.getCount())   //выбрано правильное число
+                break;
+            else
+            {
+                std::cout << "\n\nНе удалось понять, что Вы хотели выбрать из списка. Попробуйте снова:";
+            }
+        }
+        int a = noChart[choise];
+        writeNewChart(mainID, a);
+    }
+    else 
+    {
+        std::cout << "\n\nБольше не осталось пользователей, с которыми бы у Вас не было личного чата.";
+        std::cout << "\nДля продолжения, нажмите любую клавишу.";
+        char wait;
+        wait = _getch();
+        return;
+    }
+}
+
+void ConversationManager::writeNewChart(int mainID, int otherUserNum)
+{
+    this->cleanConsole();
+
+    std::cout << "\n\nДля создания нового чата, введите сообщение пользователю " << allUsers.getUser(otherUserNum).getNickname() << ".\n";
+    std::cout << "Сообщение: ";
+    std::string mes{ "" };
+    getline(std::cin, mes);
+    int mesNum = privateMessagePool.getCount();
+    Message* ptrPrivateMes = new Message(mesNum, mes);
+    privateMessagePool.add(std::move(*ptrPrivateMes));
+    delete ptrPrivateMes;
+    PrivateChat* ptrCh = new PrivateChat(mesNum, otherUserNum);     //забрали память !!!!!!!!!!!!!!!!!!!!!!!!!!
+    ptrCh->setMesNumber(mesNum);
+    ptrPrivCharts.add(std::move(ptrCh));
+    ptrCh = nullptr;            //Предположительно, потеряли память  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 }
 
