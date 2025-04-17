@@ -29,9 +29,11 @@ public:
 	void inputPrivateMessage(Array<User>& , User& , Array<Message>& );				//«апись сообщени€ в личтный чат
 	void inputCommonMessage(Array<Message>& , std::string& );						//«апись сообщени€ в общий чат
 	int amountPrivateMessage(Array<Message>& , std::string& );						// оличество личных сообщений дл€ одного пользовател€
-
+	
+//private:
 	Array <Message> privateMessagePool;
 	Array <Message> commonMessagePool;
 	Array <User> allUsers;
+	
 };
 
