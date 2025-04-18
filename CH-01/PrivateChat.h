@@ -17,4 +17,6 @@ public:
 	void setMesNumber(int);
 	bool isItRightChat(int);			//возвращает информацию, есть ли пользователь в этом чате
 	int getAnotherUser(int);			//возвращает номер второго пользователя
+	bool isTwoUsersOk(int, int);		//сравнивает номера юзеров, при полном совпадении, возвращает true
+	Array<int> getArr();				//возвращает контейнер с массивами
 };

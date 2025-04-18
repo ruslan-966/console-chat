@@ -33,8 +33,8 @@ public:
 	void inputCommonMessage(std::string& );						//Запись сообщения в общий чат
 	int amountPrivateMessage(std::string& );						//Количество личных сообщений для одного пользователя
 	void privateMesMenu(std::string&);								//Меню работы с личными сообщениями
-	void readWritePrivateChat(int);									//Работа с конкретным чатом
-	void createNewChart(int, Array<int>);										//Создание нового чата
+	void readWritePrivateChat(int, int);									//Работа с конкретным чатом
+	void createNewChart(int, Array<int>&);										//Создание нового чата
 	void writeNewChart(int, int);									//Запись данных нового чата
 
 	Array <Message> privateMessagePool;

@@ -34,3 +34,17 @@ int PrivateChat::getAnotherUser(int userNumber)
 	return _firstPartNumber;
 }
 
+bool PrivateChat::isTwoUsersOk(int frstUserNum, int secondUserNum)
+{
+	if (frstUserNum == _firstPartNumber && secondUserNum == _secondPartNumber)
+		return true;
+	if (frstUserNum == _secondPartNumber && secondUserNum == _firstPartNumber)
+		return true;
+	return false;
+}
+
+Array<int> PrivateChat::getArr()
+{
+	return _massive;
+}
+
