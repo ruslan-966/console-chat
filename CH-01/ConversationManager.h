@@ -36,6 +36,7 @@ public:
 	void readWritePrivateChat(int, int);									//Работа с конкретным чатом
 	void createNewChart(int, Array<int>&);										//Создание нового чата
 	void writeNewChart(int, int);									//Запись данных нового чата
+	void printPrivateMessagePool();									//Выводит на консоль содержимое массива
 
 	Array <Message> privateMessagePool;
 	Array <Message> commonMessagePool;

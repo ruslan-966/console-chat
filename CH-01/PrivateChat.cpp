@@ -34,6 +34,16 @@ int PrivateChat::getAnotherUser(int userNumber)
 	return _firstPartNumber;
 }
 
+int PrivateChat::getFrstUser()
+{
+	return _firstPartNumber;
+}
+
+void PrivateChat::printAllPartners()
+{
+	std::cout << "\n Partner one: " << _firstPartNumber << ". Partner two: " << _secondPartNumber << std::endl;
+}
+
 bool PrivateChat::isTwoUsersOk(int frstUserNum, int secondUserNum)
 {
 	if (frstUserNum == _firstPartNumber && secondUserNum == _secondPartNumber)
@@ -46,5 +56,10 @@ bool PrivateChat::isTwoUsersOk(int frstUserNum, int secondUserNum)
 Array<int> PrivateChat::getArr()
 {
 	return _massive;
+}
+
+void PrivateChat::printArr()
+{
+	_massive.show();
 }
 

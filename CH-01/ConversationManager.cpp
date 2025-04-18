@@ -290,16 +290,12 @@ void ConversationManager::userMessChoise(User& user)
     std::string name = user.getNickname();
     while (isRun)
     {
-
-        //int countPM{ amountPrivateMessage(name) };
-
-
         this->cleanConsole();
         std::cout << "\n\n" << user.getNickname() << ", возможные действия:\n";
         std::cout << "Выберите:\n1 - Перейти в общий чат.\n2 - Перейти к личным чатам.\n";
         
-        std::cout << "4 - просмотреть частные сообщения (количество сообщений: " << "countPM" << ").\n";
-        std::cout << "5 - завершить работу с сообщениями.\n";
+        //std::cout << "4 - просмотреть частные сообщения (количество сообщений: " << "countPM" << ").\n";
+        std::cout << "3 - завершить работу с сообщениями.\n";
         std::cout << "\nРезультат выбора : ";
 
         // отслеживаем выбор пользователя
@@ -308,7 +304,7 @@ void ConversationManager::userMessChoise(User& user)
         {
             sim = _getch();
 
-            if (sim == '1' || sim == '2' || sim == '4' || sim == '5')
+            if (sim == '1' || sim == '2' || sim == '3')
             {
                 std::cout << sim << std::endl << std::endl;
                 break;
@@ -341,13 +337,7 @@ void ConversationManager::userMessChoise(User& user)
         {
             privateMesMenu(name);
         }
-        
-        if (sim == '4')     //просмотр частнх сообщений
-        {
-            outputPrivateMesage(user);
-        }
-
-        if (sim == '5')         //завершить работу с сообщениями
+        if (sim == '3')         //завершить работу с сообщениями
             isRun = false;
     }
 }
@@ -450,12 +440,12 @@ void ConversationManager::privateMesMenu(std::string& name)
     Array <int> noChart;
     for (int i = 0; i < ptrPrivCharts.getCount(); ++i)
     {
-        //PrivateChat a = *ptrPrivCharts[i];
         if(ptrPrivCharts[i]->isItRightChat(mainID))
         {
             haveChat.add(ptrPrivCharts[i]->getAnotherUser(mainID));
         }
     }
+    //haveChat.show();                            //отладка
     for (int i = 0; i < allUsers.getCount(); ++i)
     {
         bool hasUserInChat = false;
@@ -471,6 +461,11 @@ void ConversationManager::privateMesMenu(std::string& name)
         if (!hasUserInChat &&(i != mainID))
             noChart.add(std::move(i));
     }
+    //std::cout << "\n**************\n";
+    //noChart.show();                         //отладка
+    //printPrivateMessagePool();    
+    //char pause;
+    //pause = _getch();
 
     this->cleanConsole();
     if (haveChat.getCount() == 0)
@@ -483,15 +478,16 @@ void ConversationManager::privateMesMenu(std::string& name)
         for (int i = 0; i < haveChat.getCount(); ++i)
         {
             int ii = haveChat[i];
-            std::cout << std::endl << i << ". - " << allUsers.getUser(ii).getNickname();
+            std::cout << std::endl << i << " : '" << allUsers.getUser(ii).getNickname() << "'";
+            //std::cout << std::endl << i << " - " << allUsers.getUser(ii).getNickname() << "Кол - во не выведенных сообщений: ";
         }
     }
 
     if (haveChat.getCount() > 0)
             std::cout << "\n\nВыберите номер перед именем пользователя, чей чат Вы хотите открыть.";
     
-    std::cout << " \nЧто бы создать новый чат, введите число " << haveChat.getCount() << ".";
-    std::cout << "Что бы выйти из меню - наберите число " << haveChat.getCount() + 1;
+    std::cout << " \n" << haveChat.getCount() << " : создать новый чат.\n";
+    std::cout << haveChat.getCount() + 1 << " : выйти из меню.";
 
     //std::cout << "\n\nВаш выбор: ";
     int choise{ 0 };
@@ -536,6 +532,10 @@ void ConversationManager::readWritePrivateChat(int frstUserNum, int secndUserNum
     }
     Array<int> ar = ptrPrivCharts[iConst]->getArr();                                              //Вытащили массив с номерами чата
     std::cout << "\n\n";
+    if (ar.getCount() > 0)
+    {
+        std::cout << "Чат:\n\n";
+    }
     for (int i = 0; i < ar.getCount(); ++i)
     {
         int num = ar[i];
@@ -587,11 +587,6 @@ void ConversationManager::createNewChart(int mainID, Array<int>& noChart)
         while (true)
         {
             choise = getIntValue();
-            /*
-            std::cout << "Вы ввели: " << choise << std::endl;
-            char st;
-            st = _getch();
-            */
             if (choise >= 0 && choise <= noChart.getCount())   //выбрано правильное число
                 break;
             else
@@ -625,9 +620,28 @@ void ConversationManager::writeNewChart(int mainID, int otherUserNum)
     Message* ptrPrivateMes = new Message(mesNum, mes, usName);
     privateMessagePool.add(std::move(*ptrPrivateMes));
     delete ptrPrivateMes;
-    PrivateChat* ptrCh = new PrivateChat(mesNum, otherUserNum);     //забрали память !!!!!!!!!!!!!!!!!!!!!!!!!!
+    PrivateChat* ptrCh = new PrivateChat(mainID, otherUserNum);     //забрали память !!!!!!!!!!!!!!!!!!!!!!!!!!
     ptrCh->setMesNumber(mesNum);
     ptrPrivCharts.add(std::move(ptrCh));
     ptrCh = nullptr;            //Предположительно, потеряли память  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+}
+
+void ConversationManager::printPrivateMessagePool()
+{
+    std::cout << "\nprivateMessagePool:\n";
+    for (int i = 0; i < privateMessagePool.getCount(); ++i)
+    {
+        std::cout << "\nposition " << i << " : " << *privateMessagePool[i].getMessage() << "; Писатель: " << *privateMessagePool[i].getSendFrom();
+    }
+
+    std::cout << "\n\n ptrPrivCharts:\n";
+    for (int i = 0; i < ptrPrivCharts.getCount(); ++i)
+    {
+        std::cout << "\nprivateChart " << i << " : ";
+        PrivateChat* a = ptrPrivCharts[i];
+        a->printAllPartners();
+        Array<int> m = a->getArr();
+        m.show();
+    }
 }
 

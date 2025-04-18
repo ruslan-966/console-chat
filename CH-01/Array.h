@@ -192,12 +192,12 @@ void Array<T>::show()
 {
 	if (isEmpty())
 	{
-		std::cout << "Ïóñòîé ìàññèâ" << std::endl;
+		std::cout << "Array content" << std::endl;
 		return;
 	}
 	for (int i = 0; i < _count; i++)
 	{
-		std::cout << "Ýëåìåíò " << i << " : " << _data[i] << std::endl;
+		std::cout << "Position " << i << " : " << _data[i] << std::endl;
 	}
 }
 
