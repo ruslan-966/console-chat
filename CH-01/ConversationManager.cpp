@@ -57,6 +57,10 @@ void ConversationManager::start()
             return;
         }
     }
+    for (int i = 0; i < ptrPrivCharts.getCount(); ++i)
+    {
+        delete ptrPrivCharts[i];
+    }
 }
 
 void ConversationManager::greeting()
