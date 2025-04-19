@@ -15,9 +15,9 @@ int main()
 	Array <Message> commonMessagePool;
 	Array <User> allUsers;
 	
-	//собственно текст программы:
-	//std::unique_ptr<ConversationManager> cm (new ConversationManager(allUsers, privateMessagePool, commonMessagePool));		//создаем экземпляр менеджера обмена данных с пользователем
-	std::unique_ptr<ConversationManager> cm(new ConversationManager());		//создаем экземпляр менеджера обмена данных с пользователем
+	//Г±Г®ГЎГ±ГІГўГҐГ­Г­Г® ГІГҐГЄГ±ГІ ГЇГ°Г®ГЈГ°Г Г¬Г¬Г»:
+	//std::unique_ptr<ConversationManager> cm (new ConversationManager(allUsers, privateMessagePool, commonMessagePool));		//Г±Г®Г§Г¤Г ГҐГ¬ ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ° Г¬ГҐГ­ГҐГ¤Г¦ГҐГ°Г  Г®ГЎГ¬ГҐГ­Г  Г¤Г Г­Г­Г»Гµ Г± ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ¬
+	std::unique_ptr<ConversationManager> cm(new ConversationManager());		//Г±Г®Г§Г¤Г ГҐГ¬ ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ° Г¬ГҐГ­ГҐГ¤Г¦ГҐГ°Г  Г®ГЎГ¬ГҐГ­Г  Г¤Г Г­Г­Г»Гµ Г± ГЇГ®Г«ГјГ§Г®ГўГ ГІГҐГ«ГҐГ¬
 	cm->start();
 	return 0;
 }
