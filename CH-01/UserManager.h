@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "User.h"
 #include "DataManager.h"
 #include "Array.h"
@@ -6,7 +6,7 @@
 #include <string>
 
 
-class UserManager //класс для управления пользователями
+class UserManager //РєР»Р°СЃСЃ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
 {
 public:
 	UserManager(std::unique_ptr<DataManager<User>>&& manager) : _users(std::move(manager)) {};
@@ -20,7 +20,7 @@ public:
 	bool findUserByNickname(std::string&& nickname);
 	bool findUserByLogin(std::string&& login, int& index);
 	bool findUserByLogin(std::string&& login);
-	bool loginUser(std::string&& login, std::string&& password);
+	bool loginUser(std::string&& login, std::string&& password); 
 	void showUsers();
 	int getCount() const;
 	int getPosNumber(std::string&);

@@ -1,9 +1,9 @@
-#pragma once
+п»ї#pragma once
 #include <iostream>
-#include <conio.h> // подключаем getch
+#include <conio.h> // РїРѕРґРєР»СЋС‡Р°РµРј getch
 #include <ios>		// for <streamsize>
 #include <limits>	// for numeric_limits
-#include <memory>	// для умных указателей
+#include <memory>	// РґР»СЏ СѓРјРЅС‹С… СѓРєР°Р·Р°С‚РµР»РµР№
 
 #include "User.h"
 #include "Array.h"
@@ -15,28 +15,28 @@
 class ConversationManager
 {
 public:
-	//Конструкторы
+	//РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
 	ConversationManager();
 	ConversationManager(Array <Message>&, Array <Message>&);
 	
 	void cleanConsole();
 	void start();
-	void greeting();																//Начальное приветствие пользователя
-	char regOrComm();																//Меню выбора регистрации нового участника или общения
-	bool userRegistration();											//Диалог регистрации нового пользователя
-	int usersInput();													//Вход зарегистрированного пользователя
-	void userMessChoise(User&);											//Меню общего и личного чатов
+	void greeting();																//РќР°С‡Р°Р»СЊРЅРѕРµ РїСЂРёРІРµС‚СЃС‚РІРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ 
+	char regOrComm();																//РњРµРЅСЋ РІС‹Р±РѕСЂР° СЂРµРіРёСЃС‚СЂР°С†РёРё РЅРѕРІРѕРіРѕ СѓС‡Р°СЃС‚РЅРёРєР° РёР»Рё РѕР±С‰РµРЅРёСЏ
+	bool userRegistration();											//Р”РёР°Р»РѕРі СЂРµРіРёСЃС‚СЂР°С†РёРё РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	int usersInput();													//Р’С…РѕРґ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	void userMessChoise(User&);											//РњРµРЅСЋ РѕР±С‰РµРіРѕ Рё Р»РёС‡РЅРѕРіРѕ С‡Р°С‚РѕРІ
 	
-	void outputPrivateMesage(User&);								//Вывод на консоль сообщений из личного чата
-	void outputCommonMessage();										//Вывод на консоль сообщений из общего чата
-	void inputPrivateMessage(User&);				//Запись сообщения в личтный чат
-	void inputCommonMessage(std::string& );						//Запись сообщения в общий чат
-	int amountPrivateMessage(std::string& );						//Количество личных сообщений для одного пользователя
-	void privateMesMenu(std::string&);								//Меню работы с личными сообщениями
-	void readWritePrivateChat(int, int);									//Работа с конкретным чатом
-	void createNewChart(int, Array<int>&);										//Создание нового чата
-	void writeNewChart(int, int);									//Запись данных нового чата
-	void printPrivateMessagePool();									//Выводит на консоль содержимое массива
+	void outputPrivateMesage(User&);								//Р’С‹РІРѕРґ РЅР° РєРѕРЅСЃРѕР»СЊ СЃРѕРѕР±С‰РµРЅРёР№ РёР· Р»РёС‡РЅРѕРіРѕ С‡Р°С‚Р°
+	void outputCommonMessage();										//Р’С‹РІРѕРґ РЅР° РєРѕРЅСЃРѕР»СЊ СЃРѕРѕР±С‰РµРЅРёР№ РёР· РѕР±С‰РµРіРѕ С‡Р°С‚Р°
+	void inputPrivateMessage(User&);				//Р—Р°РїРёСЃСЊ СЃРѕРѕР±С‰РµРЅРёСЏ РІ Р»РёС‡С‚РЅС‹Р№ С‡Р°С‚
+	void inputCommonMessage(std::string& );						//Р—Р°РїРёСЃСЊ СЃРѕРѕР±С‰РµРЅРёСЏ РІ РѕР±С‰РёР№ С‡Р°С‚
+	int amountPrivateMessage(std::string& );						//РљРѕР»РёС‡РµСЃС‚РІРѕ Р»РёС‡РЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№ РґР»СЏ РѕРґРЅРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+	void privateMesMenu(std::string&);								//РњРµРЅСЋ СЂР°Р±РѕС‚С‹ СЃ Р»РёС‡РЅС‹РјРё СЃРѕРѕР±С‰РµРЅРёСЏРјРё
+	void readWritePrivateChat(int, int);									//Р Р°Р±РѕС‚Р° СЃ РєРѕРЅРєСЂРµС‚РЅС‹Рј С‡Р°С‚РѕРј
+	void createNewChart(int, Array<int>&);										//РЎРѕР·РґР°РЅРёРµ РЅРѕРІРѕРіРѕ С‡Р°С‚Р°
+	void writeNewChart(int, int);									//Р—Р°РїРёСЃСЊ РґР°РЅРЅС‹С… РЅРѕРІРѕРіРѕ С‡Р°С‚Р°
+	void printPrivateMessagePool();									//Р’С‹РІРѕРґРёС‚ РЅР° РєРѕРЅСЃРѕР»СЊ СЃРѕРґРµСЂР¶РёРјРѕРµ РјР°СЃСЃРёРІР°
 
 	Array <Message> privateMessagePool;
 	Array <Message> commonMessagePool;

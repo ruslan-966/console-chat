@@ -1,4 +1,4 @@
-#include "User.h"
+﻿#include "User.h"
 
 std::string User::getNickname()	const
 {
@@ -27,7 +27,7 @@ void User::setLogin(std::string&& login)
 
 void User::setPassword(std::string&& password)
 {
-	_password = password;
+	_password = password; 
 }
 
 bool User::checkPassword(std::string&& password) const

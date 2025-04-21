@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 
 class User 
@@ -14,7 +14,7 @@ public:
 	void setNickname(std::string&& _nickname);
 	void setLogin(std::string&& _login);
 	void setPassword(std::string&& _password);
-	bool checkPassword(std::string&& _password) const;
+	bool checkPassword(std::string&& _password) const; 
 	bool operator==(const User &b);
 
 private:

@@ -1,4 +1,4 @@
-#include "Message.h"
+﻿#include "Message.h"
 
 Message::Message()
 {
@@ -73,5 +73,5 @@ bool Message::wasItPrinted() const
 
 bool Message::operator==(const Message& other)
 {
-	return (_message == other._message) ? true : false;
+	return (_message == other._message) ? true : false; 
 }

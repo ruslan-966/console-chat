@@ -1,4 +1,4 @@
-#include "PrivateChat.h"
+﻿#include "PrivateChat.h"
 
 PrivateChat::PrivateChat(int firstPartNumber, int secondPartNumber) 
 {
@@ -22,7 +22,7 @@ void PrivateChat::setMesNumber(int mesNumber)
 bool PrivateChat::isItRightChat(int userNumber)
 {
 	if (userNumber == _firstPartNumber || userNumber == _secondPartNumber)
-			return true;
+			return true; 
 	
 	return false;
 }

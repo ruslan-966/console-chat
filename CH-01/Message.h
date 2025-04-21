@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <string>
 
 class Message
@@ -10,30 +10,30 @@ private:
 	std::string _sendTo{""};
 	bool _wasItPrinted{ false };
 public:
-	// Конструкторы:
+	// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹:
 	Message();
-	Message(int, std::string, std::string, std::string);
+	Message(int, std::string, std::string, std::string); 
 	Message(int, std::string&, std::string&);
 	Message(int, std::string&);
 
 
-	// Деструктор
+	// Р”РµСЃС‚СЂСѓРєС‚РѕСЂ
 	~Message() = default;
 
-	// Сеттеры:
+	// РЎРµС‚С‚РµСЂС‹:
 	void setNumMessage(int);
 	void setMessage(std::string&);
 	void setSendFrom(std::string&);
 	void setSendTo(std::string&);
 
-	//Геттеры:
+	//Р“РµС‚С‚РµСЂС‹:
 	int getNumMessage() const;
 	std::string* getMessage();
 	std::string* getSendFrom();
 	std::string* getSendTo();
 	bool wasItPrinted() const;
 
-	//Операторы
+	//РћРїРµСЂР°С‚РѕСЂС‹
 	bool operator==(const Message& other);
 };
 

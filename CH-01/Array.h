@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <exception>
 #include <iostream>
 #include <stdint.h>
@@ -8,7 +8,7 @@
 #define RESIZEAMOUNT 5
 #define MAX_SIZE INT32_MAX/4
 
-template <typename T> class Array : public DataManager<T> //Êëàññ - îäèí èç ñïîñîáîâ õðàíåíèÿ äàííûõ
+template <typename T> class Array : public DataManager<T> //Класс - один из способов хранения данных
 {
 public:
 	Array();
@@ -21,7 +21,7 @@ public:
 	bool isFull();
 	bool isEmpty();
 	T get(int) const;
-	T operator[](int at) const;	// èñïîëüçóåòñÿ ïðè ïîëó÷åíèè ñîäåðæèìîãî èç ÿ÷åéêè ìàññèâà
+	T operator[](int at) const;	// используется при получении содержимого из ячейки массива
 	T& operator=(const T other) const;
 	int getSize() const;
 	void resize(int);
@@ -51,7 +51,7 @@ template <typename T>
 Array<T>::Array(int size)
 {
 	_count = 0;
-	if (size < 0 || size > MAX_SIZE) throw std::exception("Constructor failure: ðàçìåð ìåíüøå íóëÿ/ñëèøêîì áîëüøîé");
+	if (size < 0 || size > MAX_SIZE) throw std::exception("Constructor failure: размер меньше нуля/слишком большой");
 	_size = size;
 	_data = new T [_size];
 }
@@ -89,7 +89,7 @@ void Array<T>::add(T&& x)
 template <typename T>
 void Array<T>::pushAt(int i, T&& x)
 {
-	if (i < 0 || i >= _size) throw std::exception("Add failure: ðàçìåð ìåíüøå íóëÿ/ñëèøêîì áîëüøîé");
+	if (i < 0 || i >= _size) throw std::exception("Add failure: размер меньше нуля/слишком большой");
 	_data[i] = x;
 	_count++;
 }
@@ -109,7 +109,7 @@ bool Array<T>::isEmpty()
 template <typename T>
 T Array<T>::get(int i) const
 {
-	if (i > _count - 1) throw std::exception("Get failure: âûõîä çà ïðåäåëû");
+	if (i > _count - 1) throw std::exception("Get failure: выход за пределы");
 	return _data[i];
 }
 
@@ -122,7 +122,7 @@ inline int Array<T>::getCount() const
 template <typename T>
 T Array<T>::operator[](int i) const
 {
-	if (i > _count - 1) throw std::exception("Get failure: âûõîä çà ïðåäåëû");
+	if (i > _count - 1) throw std::exception("Get failure: выход за пределы");
 	return _data[i];
 }
 
@@ -145,9 +145,9 @@ void Array<T>::clear()
 }
 
 template <typename T>
-void Array<T>::moveElementsLeft(int pos) //ñäâèíóòü ýëåìåíòû âëåâî, íà÷èíàÿ ñ pos
+void Array<T>::moveElementsLeft(int pos) //сдвинуть элементы влево, начиная с pos
 {
-	if (pos < 1 || pos >= _count) throw std::exception("MoveElementsLeft failure: ïîçèöèÿ ìåíüøå 1 èëè áîëüøå, ÷åì ïîñëåäíèé ýëåìåíò");
+	if (pos < 1 || pos >= _count) throw std::exception("MoveElementsLeft failure: позиция меньше 1 или больше, чем последний элемент");
 	for (int i = pos; i < _size; i++)
 	{
 			_data[i - 1] = _data[i];
@@ -163,7 +163,7 @@ int Array<T>::getSize() const
 template <typename T>
 void Array<T>::resize(int slotsToAdd)
 {
-	if (_size + slotsToAdd > MAX_SIZE || slotsToAdd < 1) throw std::exception("Resize failure: ñëèøêîì áîëüøîé íîâûé ðàçìåð ìàññèâà/äîáàâëåíèå 0 èëè îòðèöàòåëüíîãî êîë-âà ÿ÷ååê");
+	if (_size + slotsToAdd > MAX_SIZE || slotsToAdd < 1) throw std::exception("Resize failure: слишком большой новый размер массива/добавление 0 или отрицательного кол-ва ячеек");
 
 	T* arr = new T[_size];
 
@@ -204,8 +204,8 @@ void Array<T>::show()
 template <typename T>
 void Array<T>::deleteAt(int i)
 {
-	if (i < 0 || i >= _size) throw std::exception("Delete failure: âûõîä çà ïðåäåëû ìàññèâà");
-	if (i>_count-1) std::cout << "Ïóñòîé ýëåìåíò!" << std::endl;
+	if (i < 0 || i >= _size) throw std::exception("Delete failure: выход за пределы массива");
+	if (i>_count-1) std::cout << "Пустой элемент!" << std::endl;
 
 	if (i<_size-2)
 	moveElementsLeft(i+1);

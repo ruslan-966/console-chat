@@ -1,4 +1,4 @@
-#include "UserManager.h"
+ï»¿#include "UserManager.h"
 #include <iostream>
 
 bool UserManager::addUser(User&& user)
@@ -6,10 +6,10 @@ bool UserManager::addUser(User&& user)
 	if (!exists(move(user.getNickname()), move(user.getLogin())))
 	{
 		_users->add(std::move(user));
-		std::cout << "Ïîëüçîâàòåëü " << user.getNickname() << " óñïåøíî çàðåãèñòðèðîâàí!" << std::endl;
+		std::cout << "ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ " << user.getNickname() << " ÑƒÑÐ¿ÐµÑˆÐ½Ð¾ Ð·Ð°Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ð½!" << std::endl;
 		return true;
 	}
-	std::cout << "Ïîëüçîâàòåëü ñ òàêèì íèêîì èëè ëîãèíîì óæå çàðåãèñòðèðîâàí!" << std::endl;
+	std::cout << "ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ Ñ Ñ‚Ð°ÐºÐ¸Ð¼ Ð½Ð¸ÐºÐ¾Ð¼ Ð¸Ð»Ð¸ Ð»Ð¾Ð³Ð¸Ð½Ð¾Ð¼ ÑƒÐ¶Ðµ Ð·Ð°Ñ€ÐµÐ³Ð¸ÑÑ‚Ñ€Ð¸Ñ€Ð¾Ð²Ð°Ð½!" << std::endl;
 	return false;
 }
 
@@ -28,7 +28,7 @@ bool UserManager::findUser(User&& user, int& index)
 	return (_users->find(std::move(user), index)) ? true : false;
 }
 
-bool UserManager::exists(std::string&& nickname, std::string&& login)
+bool UserManager::exists(std::string&& nickname, std::string&& login) 
 {
 	for (int i = 0; i < _users->getCount(); i++)
 	{
@@ -96,12 +96,12 @@ bool UserManager::loginUser(std::string&& login, std::string&& password)
 
 	if (findUserByLogin(move(login), index) && _users->get(index).checkPassword(std::move(password)))
 	{
-		std::cout << "Óñïåøíûé âõîä â ÷àò!" << std::endl;
+		std::cout << "Ð£ÑÐ¿ÐµÑˆÐ½Ñ‹Ð¹ Ð²Ñ…Ð¾Ð´ Ð² Ñ‡Ð°Ñ‚!" << std::endl;
 		currentUser = std::make_unique<User>(_users->get(index));
 		return true;
 	}
 
-	std::cout << "Íåâåðíûé ëîãèí èëè ïàðîëü!" << std::endl;
+	std::cout << "ÐÐµÐ²ÐµÑ€Ð½Ñ‹Ð¹ Ð»Ð¾Ð³Ð¸Ð½ Ð¸Ð»Ð¸ Ð¿Ð°Ñ€Ð¾Ð»ÑŒ!" << std::endl;
 	return false;
 
 }
@@ -110,7 +110,7 @@ void UserManager::showUsers()
 {
 	for (int i = 0; i < _users->getCount(); i++)
 	{
-		std::cout << "ID: " << i << " " << " Íèêíåéì: " << _users->get(i).getLogin() << std::endl;
+		std::cout << "ID: " << i << " " << " ÐÐ¸ÐºÐ½ÐµÐ¹Ð¼: " << _users->get(i).getLogin() << std::endl;
 	}
 }
 

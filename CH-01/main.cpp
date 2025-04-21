@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <Windows.h>
 #include <memory>
 #include "Message.h"
@@ -14,8 +14,8 @@ int main()
 	Array <Message> privateMessagePool;
 	Array <Message> commonMessagePool;
 	
-	//собственно текст программы:
-	std::unique_ptr<ConversationManager> cm (new ConversationManager(privateMessagePool, commonMessagePool));		//создаем экземпляр менеджера обмена данных с пользователем
+	//СЃРѕР±СЃС‚РІРµРЅРЅРѕ С‚РµРєСЃС‚ РїСЂРѕРіСЂР°РјРјС‹:
+	std::unique_ptr<ConversationManager> cm (new ConversationManager(privateMessagePool, commonMessagePool));		//СЃРѕР·РґР°РµРј СЌРєР·РµРјРїР»СЏСЂ РјРµРЅРµРґР¶РµСЂР° РѕР±РјРµРЅР° РґР°РЅРЅС‹С… СЃ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј 
 	cm->start();
 	return 0;
 }
